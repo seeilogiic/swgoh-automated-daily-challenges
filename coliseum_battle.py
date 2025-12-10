@@ -3,7 +3,7 @@ import time
 import pyautogui
 from pywinauto import Desktop
 
-from utils import click_battle_button
+from utils import ASSETS_DIR, click_image
 
 TITLE_PATTERN = ".*BlueStacks.*"  # adjust after inspecting titles
 
@@ -49,11 +49,18 @@ def main():
     pyautogui.press("f")
 
     region = _get_window_region(win)
-    point = click_battle_button(region=region, attempts=10, delay=10.0)
+
+    green_okay = ASSETS_DIR / "green_okay.png"
+    battle_button = ASSETS_DIR / "coliseum_battle_button.png"
+
+    # Click Coliseum/Battle first, then clear any OK modal.
+    point = click_image(battle_button, region=region, attempts=10, delay=10.0)
     if point:
         print("[SUCCESS] Clicked Battle button")
     else:
         print("[FAIL] Could not click Battle button")
+
+    click_image(green_okay, region=region, attempts=2, delay=2.0)
 
 
 if __name__ == "__main__":

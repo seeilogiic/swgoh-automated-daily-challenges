@@ -6,7 +6,6 @@ import pyautogui
 
 # Default asset location; override with ASSETS_DIR env var if needed.
 ASSETS_DIR = Path(os.getenv("ASSETS_DIR", "images"))
-BATTLE_BUTTON = ASSETS_DIR / "coliseum_battle_button.png"
 
 
 def locate_image_on_screen(
@@ -45,20 +44,20 @@ def locate_image_on_screen(
     return None
 
 
-def click_battle_button(
+def click_image(
+    image_path: str | Path,
     region=None,
     confidence: float = 0.9,
     attempts: int = 10,
-    delay: float = 10.0,
+    delay: float = 5.0,
     pause: float = 0.2,
 ):
     """
-    Look for the battle button image and click it when found.
-    Retries up to `attempts` with `delay` seconds between tries.
-    Does not raise if the button is never found.
+    Locate an image and click it if found. Returns the point or None.
+    Does not raise if not found.
     """
     point = locate_image_on_screen(
-        BATTLE_BUTTON,
+        image_path,
         region=region,
         confidence=confidence,
         attempts=attempts,
@@ -66,14 +65,16 @@ def click_battle_button(
     )
 
     if not point:
-        print("[WARN] Battle button not found after retries; continuing without click.")
+        print(f"[WARN] Could not find: {image_path}")
         return None
 
     pyautogui.click(point)
     time.sleep(pause)
+    print(f"[INFO] Clicked: {os.path.basename(str(image_path))}")
     return point
 
 
 if __name__ == "__main__":
-    # Standalone usage: look for the battle button and click if present.
-    click_battle_button()
+    # Example standalone usage: update the image path as needed.
+    example_image = ASSETS_DIR / "coliseum_battle_button.png"
+    click_image(example_image)
