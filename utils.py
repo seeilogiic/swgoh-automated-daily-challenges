@@ -55,7 +55,7 @@ def click_image(
     region=None,
     confidence: float = 0.9,
     attempts: int = 10,
-    delay: float = 5.0,
+    delay: float = 3.0,
     pause: float = 0.2,
 ):
     """
