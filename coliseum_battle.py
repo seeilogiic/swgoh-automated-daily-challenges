@@ -3,7 +3,7 @@ import time
 import pyautogui
 from pywinauto import Desktop
 
-from utils import ASSETS_DIR, click_image
+from utils import ASSETS_DIR, click_image, locate_image_on_screen
 
 TITLE_PATTERN = ".*BlueStacks.*"  # adjust after inspecting titles
 
@@ -52,7 +52,9 @@ def main():
 
     green_okay = ASSETS_DIR / "green_okay.png"
     battle_button = ASSETS_DIR / "coliseum_battle_button.png"
-    long_coliseum_battle_button = ASSETS_DIR / "long_coliseum_battle_button.png"
+    auto_play = ASSETS_DIR / "auto_play.png"
+    green_continue = ASSETS_DIR / "green_continue.png"
+    home_button = ASSETS_DIR / "home_button.png"
 
     # Click Coliseum/Battle first, then clear any OK modal.
     point = click_image(battle_button, region=region, attempts=10, delay=10.0)
@@ -61,8 +63,23 @@ def main():
     else:
         print("[FAIL] Could not click Battle button")
 
-    click_image(green_okay, region=region, attempts=2, delay=2.0)
-    click_image(long_coliseum_battle_button, )
+    click_image(green_okay, region=region, attempts=10, delay=10.0)
+
+    auto_point = locate_image_on_screen(
+        auto_play,
+        region=region,
+        attempts=10,
+        delay=10.0,
+    )
+    if auto_point:
+        pyautogui.press("c")
+        print("[SUCCESS] Triggered auto-play with 'c'")
+    else:
+        print("[INFO] Auto-play button not visible; skipping 'c' press")
+
+    click_image(green_continue, region=region, attempts=30, delay=10)
+    click_image(home_button, region=region, attempts=10, delay=10)
+    
 
 
 if __name__ == "__main__":
