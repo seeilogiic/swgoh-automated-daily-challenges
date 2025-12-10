@@ -1,8 +1,12 @@
-from pywinauto import Application, Desktop
-import pyautogui
 import time
 
+import pyautogui
+from pywinauto import Desktop
+
+from utils import click_battle_button
+
 TITLE_PATTERN = ".*BlueStacks.*"  # adjust after inspecting titles
+
 
 def find_app_player_window():
     desktop = Desktop(backend="win32")
@@ -27,12 +31,30 @@ def find_app_player_window():
 
     return candidates[0]
 
-# Give BlueStacks a moment to be ready, if you’re launching it just before
-time.sleep(1)
 
-win = find_app_player_window()
-win.set_focus()
+def _get_window_region(window):
+    rect = window.rectangle()
+    return (rect.left, rect.top, rect.width(), rect.height())
 
-# Optional small delay to ensure focus actually changed
-time.sleep(0.2)
-pyautogui.press("f")
+
+def main():
+    # Give BlueStacks a moment to be ready, if you’re launching it just before
+    time.sleep(1)
+
+    win = find_app_player_window()
+    win.set_focus()
+
+    # Optional small delay to ensure focus actually changed
+    time.sleep(0.2)
+    pyautogui.press("f")
+
+    region = _get_window_region(win)
+    point = click_battle_button(region=region, attempts=10, delay=10.0)
+    if point:
+        print("[SUCCESS] Clicked Battle button")
+    else:
+        print("[FAIL] Could not click Battle button")
+
+
+if __name__ == "__main__":
+    main()
