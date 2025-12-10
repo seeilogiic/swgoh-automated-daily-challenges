@@ -19,8 +19,12 @@ def locate_image_on_screen(
     Look for an image on screen with retries. Returns a point or None.
     Never raises if the image is missing.
     """
-    image = os.path.splitext(os.path.basename(str(image_path)))[0]
     image_path = Path(image_path)
+    image = image_path.stem
+
+    if not image_path.exists():
+        print(f"[FAIL] Image file not found: {image_path}")
+        return None
 
     for attempt in range(attempts):
         try:
@@ -29,7 +33,9 @@ def locate_image_on_screen(
                 confidence=confidence,
                 region=region,
             )
-        except pyautogui.ImageNotFoundException:
+        except (pyautogui.ImageNotFoundException, OSError, pyautogui.PyAutoGUIException) as exc:
+            # Treat any locate/read error as a miss, but do not raise.
+            print(f"[WARN] Error locating image {image}: {exc}")
             point = None
 
         if point:
@@ -40,7 +46,7 @@ def locate_image_on_screen(
             print(f"[INFO] Could not find image: {image} | Try {attempt + 1}/{attempts}")
             time.sleep(delay)
 
-    print(f"[WARN] Giving up finding image: {image}")
+    print(f"[FAIL] Giving up finding image: {image}")
     return None
 
 
@@ -65,7 +71,7 @@ def click_image(
     )
 
     if not point:
-        print(f"[WARN] Could not find: {image_path}")
+        print(f"[FAIL] Could not find: {image_path}")
         return None
 
     pyautogui.click(point)

@@ -52,18 +52,14 @@ def main():
 
     green_okay = ASSETS_DIR / "green_okay.png"
     battle_button = ASSETS_DIR / "coliseum_battle_button.png"
-    auto_play = ASSETS_DIR / "auto_play.png"
+    auto_play = ASSETS_DIR / "auto_play_button.png"
     green_continue = ASSETS_DIR / "green_continue.png"
     home_button = ASSETS_DIR / "home_button.png"
 
     # Click Coliseum/Battle first, then clear any OK modal.
-    point = click_image(battle_button, region=region, attempts=10, delay=10.0)
-    if point:
-        print("[SUCCESS] Clicked Battle button")
-    else:
-        print("[FAIL] Could not click Battle button")
-
+    click_image(battle_button, region=region, attempts=10, delay=10.0)
     click_image(green_okay, region=region, attempts=10, delay=10.0)
+    click_image(battle_button, region=region, attempts=10, delay=10.0)
 
     auto_point = locate_image_on_screen(
         auto_play,
@@ -73,11 +69,19 @@ def main():
     )
     if auto_point:
         pyautogui.press("c")
-        print("[SUCCESS] Triggered auto-play with 'c'")
-    else:
-        print("[INFO] Auto-play button not visible; skipping 'c' press")
 
-    click_image(green_continue, region=region, attempts=30, delay=10)
+    center_point = (region[0] + region[2] // 2, region[1] + region[3] // 2)
+    continued = False
+    for attempt in range(30):
+        pyautogui.click(center_point)
+        point = click_image(green_continue, region=region, attempts=1, delay=0.0)
+        if point:
+            continued = True
+            break
+        time.sleep(10)
+    if not continued:
+        print("[FAIL] Could not click green_continue after retries")
+
     click_image(home_button, region=region, attempts=10, delay=10)
     
 
