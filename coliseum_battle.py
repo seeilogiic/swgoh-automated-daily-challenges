@@ -52,6 +52,7 @@ def main():
 
     green_okay = ASSETS_DIR / "green_okay.png"
     battle_button = ASSETS_DIR / "coliseum_battle_button.png"
+    long_coliseum_battle_button = ASSETS_DIR / "long_coliseum_battle_button.png"
 
     # Click Coliseum/Battle first, then clear any OK modal.
     point = click_image(battle_button, region=region, attempts=10, delay=10.0)
@@ -61,6 +62,7 @@ def main():
         print("[FAIL] Could not click Battle button")
 
     click_image(green_okay, region=region, attempts=2, delay=2.0)
+    click_image(long_coliseum_battle_button, )
 
 
 if __name__ == "__main__":
